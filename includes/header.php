@@ -36,6 +36,22 @@ if (!defined('BASE_URL')) {
     <link href="<?php echo BASE_URL; ?>/public/css/style.css" rel="stylesheet" />
     <!-- Responsive style -->
     <link href="<?php echo BASE_URL; ?>/public/css/responsive.css" rel="stylesheet" />
+    <!-- CSS tùy chỉnh -->
+    <style>
+        .admin-icon {
+            margin-right: 10px;
+            color: #f7444e; /* Màu đỏ đồng bộ với giao diện */
+            text-decoration: none;
+            font-size: 18px;
+        }
+        .admin-icon:hover {
+            color: #ff6f61; /* Màu hover đồng bộ với các nút khác */
+        }
+        .admin-icon span {
+            margin-left: 5px;
+            font-size: 14px;
+        }
+    </style>
 </head>
 
 <body>
@@ -55,18 +71,6 @@ if (!defined('BASE_URL')) {
                         <li class="nav-item">
                             <a class="nav-link" href="<?php echo BASE_URL; ?>/index.php">Home <span class="sr-only">(current)</span></a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php echo BASE_URL; ?>/about.php">About</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php echo BASE_URL; ?>/furniture.php">Furnitures</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php echo BASE_URL; ?>/blog.php">Blog</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php echo BASE_URL; ?>/contact.php">Contact Us</a>
-                        </li>
                         <!-- Liên kết Lịch Sử Mua Hàng (đã thêm trước đó) -->
                         <?php if (isset($_SESSION['user_id'])): ?>
                             <li class="nav-item">
@@ -85,6 +89,13 @@ if (!defined('BASE_URL')) {
                         <span style="color: black; margin-right: 10px;">
                             Xin chào, <?php echo htmlspecialchars($_SESSION['username']); ?>
                         </span>
+                        <!-- Thêm icon admin nếu tài khoản là admin -->
+                        <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin'): ?>
+                            <a href="<?php echo BASE_URL; ?>/auth/admin_dashboard.php" class="admin-icon" title="Quản lý Admin">
+                                <i class="fa fa-user-shield" aria-hidden="true"></i>
+                                <span>Admin</span>
+                            </a>
+                        <?php endif; ?>
                         <a href="<?php echo BASE_URL; ?>/Auth/logout.php" style="margin-right: 10px;">
                             <span>Đăng xuất</span>
                             <i class="fa fa-sign-out" aria-hidden="true"></i>

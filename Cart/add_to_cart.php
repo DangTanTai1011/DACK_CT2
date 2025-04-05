@@ -50,3 +50,4 @@ $_SESSION['message'] = 'Thêm vào giỏ hàng thành công!';
 header('Location: ../index.php'); // Quay lại trang sản phẩm
 exit();
 ?>
+    

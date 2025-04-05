@@ -1,7 +1,7 @@
 <?php
 session_start();
 include '../config/db.php';
-include '../includes/header.php';
+include '../includes/header.php'; // Khôi phục header.php
 
 // Lấy danh sách danh mục
 $categories = $pdo->query("SELECT * FROM categories")->fetchAll();
@@ -71,58 +71,238 @@ unset($_SESSION['message']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kết Quả Tìm Kiếm</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Toastify CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- CSS tùy chỉnh -->
     <style>
-        .filter-form { margin-bottom: 20px; }
-        .filter-form .form-control { margin-bottom: 10px; }
-        .box { border: 1px solid #ddd; padding: 15px; text-align: center; margin-bottom: 20px; border-radius: 8px; }
-        .img-box img { max-width: 100%; height: auto; border-radius: 8px; }
-        .price_heading { font-size: 18px; color: red; font-weight: bold; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f7fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background: #fff;
+            border: none;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            background: #fff;
+            border-bottom: none;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h2 {
+            color: #333;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-header h2 i {
+            margin-right: 0.5rem;
+            color: #f7444e;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .btn-back {
+            background: #f7444e;
+            border: none;
+            border-radius: 5px;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            color: #fff;
+            transition: background 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: #ff6f61;
+        }
+
+        .product-card {
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background: #fff;
+            border: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-card img {
+            border-radius: 10px 10px 0 0;
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .product-card .card-body {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .product-card h5 {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-card p {
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-card .price {
+            color: #f7444e;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-card .btn-details {
+            background: #007bff;
+            border: none;
+            border-radius: 5px;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            color: #fff;
+            transition: background 0.3s ease;
+        }
+
+        .product-card .btn-details:hover {
+            background: #0056b3;
+        }
+
+        .product-card .btn-add-to-cart {
+            background: #28a745;
+            border: none;
+            border-radius: 5px;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            color: #fff;
+            transition: background 0.3s ease;
+        }
+
+        .product-card .btn-add-to-cart:hover {
+            background: #218838;
+        }
+
+        .no-products {
+            text-align: center;
+            color: #666;
+            padding: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 767px) {
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .card-header h2 {
+                margin-bottom: 1rem;
+            }
+
+            .card-header .btn-back {
+                margin-bottom: 1rem;
+            }
+
+            .product-card img {
+                height: 150px;
+            }
+
+            .product-card .btn-details,
+            .product-card .btn-add-to-cart {
+                display: block;
+                width: 100%;
+                margin: 0.25rem 0;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container mt-4">
-        <h2 class="text-center">Kết Quả Tìm Kiếm</h2>
-
-        <?php if ($message): ?>
-            <div class="alert alert-info"><?= htmlspecialchars($message) ?></div>
-        <?php endif; ?>
-
-        <!-- Hiển thị danh sách sản phẩm -->
-        <div class="row">
-            <?php if (count($products) > 0): ?>
-                <?php foreach ($products as $p): ?>
-                    <div class="col-md-4">
-                        <div class="box">
-                            <div class="img-box">
-                                <img src="../image/<?= htmlspecialchars($p['image_url']) ?>" alt="<?= htmlspecialchars($p['name']) ?>">
-                            </div>
-                            <div class="detail-box">
-                                <h5><?= htmlspecialchars($p['name']) ?></h5>
-                                <p><strong>Danh mục:</strong> <?= htmlspecialchars($p['category_name']) ?></p>
-                                <div class="price_box">
-                                    <h6 class="price_heading">
-                                        <span>₫</span> <?= number_format($p['price'], 0, ',', '.') ?> VNĐ
-                                    </h6>
-                                    <p><strong>Đánh giá trung bình:</strong> <?= number_format($p['avg_rating'], 1) ?> / 5</p>
-                                    <a href="../product/product_detail.php?id=<?= $p['id'] ?>" class="btn btn-info">Xem Chi Tiết</a>
-                                    <form action="../Cart/add_to_cart.php" method="POST" class="mt-2">
-                                        <input type="hidden" name="id" value="<?= $p['id'] ?>">
-                                        <button type="submit" class="btn btn-success">🛒 Thêm vào giỏ hàng</button>
-                                    </form>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <a href="../index.php" class="btn btn-back"><i class="fas fa-arrow-left"></i> Quay về</a>
+                <h2><i class="fas fa-search"></i> Kết Quả Tìm Kiếm</h2>
+                <div></div> <!-- Placeholder để giữ layout -->
+            </div>
+            <div class="card-body">
+                <!-- Hiển thị danh sách sản phẩm -->
+                <div class="row">
+                    <?php if (count($products) > 0): ?>
+                        <?php foreach ($products as $p): ?>
+                            <div class="col-md-4 mb-4">
+                                <div class="product-card">
+                                    <img src="../image/<?= htmlspecialchars($p['image_url']) ?>" alt="<?= htmlspecialchars($p['name']) ?>">
+                                    <div class="card-body">
+                                        <h5><?= htmlspecialchars($p['name']) ?></h5>
+                                        <p><strong>Danh mục:</strong> <?= htmlspecialchars($p['category_name']) ?></p>
+                                        <p class="price">₫ <?= number_format($p['price'], 0, ',', '.') ?> VNĐ</p>
+                                        <p><strong>Đánh giá:</strong> <?= number_format($p['avg_rating'], 1) ?> / 5</p>
+                                        <a href="../product/product_detail.php?id=<?= $p['id'] ?>" class="btn btn-details">
+                                            <i class="fas fa-eye"></i> Xem Chi Tiết
+                                        </a>
+                                        <form action="../Cart/add_to_cart.php" method="POST" class="d-inline">
+                                            <input type="hidden" name="id" value="<?= $p['id'] ?>">
+                                            <button type="submit" class="btn btn-add-to-cart">
+                                                <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <div class="no-products">
+                            <p>Không có sản phẩm nào phù hợp với tiêu chí tìm kiếm của bạn.</p>
                         </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <div class="col-12">
-                    <p class="text-center">Không có sản phẩm nào phù hợp với tiêu chí tìm kiếm của bạn.</p>
+                    <?php endif; ?>
                 </div>
-            <?php endif; ?>
+            </div>
         </div>
     </div>
+
+    <!-- Toastify JS -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+        // Hiển thị thông báo nếu có
+        <?php if ($message): ?>
+            Toastify({
+                text: "<?= htmlspecialchars($message) ?>",
+                duration: 1500,
+                gravity: 'top',
+                position: 'right',
+                backgroundColor: '#f7444e',
+            }).showToast();
+        <?php endif; ?>
+    </script>
+
+<?php include '../includes/footer.php'; // Khôi phục footer.php ?>
 </body>
 </html>
-
-<?php include '../includes/footer.php'; ?>
