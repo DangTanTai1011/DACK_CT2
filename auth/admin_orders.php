@@ -12,11 +12,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $order_id = $_POST['order_id'] ?? '';
     $action = $_POST['action'] ?? '';
 
-    if ($order_id && in_array($action, ['confirm', 'cancel'])) {
-        $status = $action === 'confirm' ? 'confirmed' : 'cancelled';
-        $stmt = $pdo->prepare("UPDATE orders SET status = ? WHERE id = ?");
-        $stmt->execute([$status, $order_id]);
-        $_SESSION['success'] = "Đơn hàng đã được " . ($action === 'confirm' ? 'xác nhận' : 'hủy') . " thành công!";
+    if ($order_id && in_array($action, ['confirm', 'cancel', 'delete'])) {
+        if ($action === 'delete') {
+            $stmt = $pdo->prepare("DELETE FROM order_details WHERE order_id = ?");
+            $stmt->execute([$order_id]);
+
+            $stmt = $pdo->prepare("DELETE FROM orders WHERE id = ?");
+            $stmt->execute([$order_id]);
+
+            $_SESSION['success'] = "Đơn hàng đã được xóa thành công!";
+        } else {
+            $status = $action === 'confirm' ? 'confirmed' : 'cancelled';
+            $stmt = $pdo->prepare("UPDATE orders SET status = ? WHERE id = ?");
+            $stmt->execute([$status, $order_id]);
+            $_SESSION['success'] = "Đơn hàng đã được " . ($action === 'confirm' ? 'xác nhận' : 'hủy') . " thành công!";
+        }
     } else {
         $_SESSION['error'] = "Hành động không hợp lệ.";
     }
@@ -227,6 +237,14 @@ $orders = $stmt->fetchAll();
                                                     <input type="hidden" name="action" value="cancel">
                                                     <button type="submit" class="btn btn-cancel btn-action text-white">
                                                         <i class="fas fa-times"></i> Hủy
+                                                    </button>
+                                                </form>
+                                            <?php elseif (in_array($order['status'], ['confirmed', 'cancelled'])): ?>
+                                                <form method="POST" style="display: inline;" onsubmit="return confirm('Bạn có chắc muốn xóa đơn hàng này không?');">
+                                                    <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
+                                                    <input type="hidden" name="action" value="delete">
+                                                    <button type="submit" class="btn btn-danger btn-action text-white">
+                                                        <i class="fas fa-trash-alt"></i> Xóa
                                                     </button>
                                                 </form>
                                             <?php endif; ?>
