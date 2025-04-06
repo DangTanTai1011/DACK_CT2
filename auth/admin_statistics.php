@@ -1,21 +1,17 @@
 <?php
 session_start();
 
-// Kiểm tra quyền truy cập admin trước khi có bất kỳ output nào
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
     $_SESSION['message'] = "Bạn cần đăng nhập với tài khoản admin để truy cập trang này.";
     header("Location: ../auth/login.php");
     exit();
 }
 
-// Include file sau khi kiểm tra session
 include '../config/db.php';
 
-// Lấy dữ liệu thống kê
 $total_revenue = $pdo->query("SELECT SUM(total) FROM orders WHERE status = 'confirmed'")->fetchColumn() ?? 0;
 $total_orders = $pdo->query("SELECT COUNT(*) FROM orders WHERE status = 'confirmed'")->fetchColumn() ?? 0;
 
-// Thống kê sản phẩm bán chạy
 $top_products = $pdo->query("SELECT p.name, SUM(od.quantity) as total_sold 
                              FROM order_details od 
                              JOIN products p ON od.product_id = p.id 
@@ -32,13 +28,9 @@ $top_products = $pdo->query("SELECT p.name, SUM(od.quantity) as total_sold
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thống kê doanh thu</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Toastify CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- CSS tùy chỉnh -->
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -165,7 +157,6 @@ $top_products = $pdo->query("SELECT p.name, SUM(od.quantity) as total_sold
             padding: 2rem;
         }
 
-        /* Responsive */
         @media (max-width: 767px) {
             .table-responsive {
                 overflow-x: auto;
@@ -192,12 +183,11 @@ $top_products = $pdo->query("SELECT p.name, SUM(od.quantity) as total_sold
 </head>
 <body>
     <div class="container">
-        <!-- Card: Thống kê doanh thu -->
         <div class="card">
             <div class="card-header">
                 <a href="../auth/admin_dashboard.php" class="btn btn-back"><i class="fas fa-arrow-left"></i> Quay về</a>
                 <h2><i class="fas fa-chart-line"></i> Thống kê doanh thu</h2>
-                <div></div> <!-- Placeholder để giữ layout -->
+                <div></div>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -217,7 +207,6 @@ $top_products = $pdo->query("SELECT p.name, SUM(od.quantity) as total_sold
             </div>
         </div>
 
-        <!-- Card: Sản phẩm bán chạy -->
         <div class="card">
             <div class="card-header">
                 <h4><i class="fas fa-fire"></i> Sản phẩm bán chạy</h4>
@@ -251,10 +240,8 @@ $top_products = $pdo->query("SELECT p.name, SUM(od.quantity) as total_sold
         </div>
     </div>
 
-    <!-- Toastify JS -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
-        // Hiển thị thông báo lỗi nếu có
         <?php if (isset($_SESSION['error'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['error']) ?>",
@@ -266,7 +253,6 @@ $top_products = $pdo->query("SELECT p.name, SUM(od.quantity) as total_sold
             <?php unset($_SESSION['error']); ?>
         <?php endif; ?>
 
-        // Hiển thị thông báo thành công nếu có
         <?php if (isset($_SESSION['success'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['success']) ?>",

@@ -1,23 +1,19 @@
 <?php
 session_start();
 include './config/db.php';
-include './includes/header.php'; // Khôi phục header.php
+include './includes/header.php';
 
-// Lấy danh sách danh mục
 $categories = $pdo->query("SELECT * FROM categories")->fetchAll();
 
-// Nhận dữ liệu lọc từ GET
 $search = $_GET['search'] ?? '';
 $category = $_GET['category'] ?? '';
 $min_price = $_GET['min_price'] ?? '';
 $max_price = $_GET['max_price'] ?? '';
 
-// Xử lý khoảng giá từ select
 if (isset($_GET['price_range']) && $_GET['price_range'] !== '') {
     list($min_price, $max_price) = explode('-', $_GET['price_range']);
 }
 
-// Prepare SQL query
 $sql = "SELECT p.*, c.name AS category_name, 
         COALESCE(AVG(r.rating), 0) AS avg_rating
         FROM products p
@@ -47,15 +43,12 @@ if ($max_price !== '') {
     $params[] = $max_price;
 }
 
-// Nhóm các sản phẩm theo ID
 $sql .= " GROUP BY p.id";
 
-// Thực thi câu lệnh
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $products = $stmt->fetchAll();
 
-// Kiểm tra xem có thông báo nào không
 $message = $_SESSION['message'] ?? '';
 unset($_SESSION['message']);
 ?>
@@ -66,13 +59,9 @@ unset($_SESSION['message']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh Sách Sản Phẩm</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Toastify CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- CSS tùy chỉnh -->
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -241,7 +230,6 @@ unset($_SESSION['message']);
             padding: 2rem;
         }
 
-        /* Responsive */
         @media (max-width: 767px) {
             .filter-form .row > div {
                 margin-bottom: 1rem;
@@ -267,7 +255,6 @@ unset($_SESSION['message']);
                 <h2><i class="fas fa-box-open"></i> Danh Sách Sản Phẩm</h2>
             </div>
             <div class="card-body">
-                <!-- Form lọc sản phẩm -->
                 <form method="GET" action="Product/search_results.php" class="filter-form row">
                     <div class="col-md-3">
                         <input type="text" name="search" class="form-control" placeholder="Tìm kiếm..." value="<?= htmlspecialchars($search) ?>">
@@ -295,7 +282,6 @@ unset($_SESSION['message']);
                     </div>
                 </form>
 
-                <!-- Danh sách sản phẩm -->
                 <div class="row">
                     <?php if (empty($products)): ?>
                         <div class="no-products">
@@ -330,10 +316,8 @@ unset($_SESSION['message']);
         </div>
     </div>
 
-    <!-- Toastify JS -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
-        // Hiển thị thông báo nếu có
         <?php if ($message): ?>
             Toastify({
                 text: "<?= htmlspecialchars($message) ?>",
@@ -345,6 +329,6 @@ unset($_SESSION['message']);
         <?php endif; ?>
     </script>
 
-<?php include './includes/footer.php'; // Khôi phục footer.php ?>
+<?php include './includes/footer.php'; ?>
 </body>
 </html>

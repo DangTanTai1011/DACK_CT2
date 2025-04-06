@@ -2,7 +2,6 @@
 session_start();
 include '../config/db.php';
 
-// Kiểm tra xem người dùng đã đăng nhập chưa
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['error'] = "Bạn cần đăng nhập để xem lịch sử mua hàng.";
     header("Location: ../auth/login.php");
@@ -11,7 +10,6 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Lấy danh sách đơn hàng của người dùng
 $stmt = $pdo->prepare("SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC");
 $stmt->execute([$user_id]);
 $orders = $stmt->fetchAll();
@@ -25,13 +23,9 @@ include '../includes/header.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lịch Sử Mua Hàng</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Toastify CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- CSS tùy chỉnh -->
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -136,7 +130,6 @@ include '../includes/header.php';
             padding: 2rem;
         }
 
-        /* Responsive */
         @media (max-width: 767px) {
             .card-header {
                 flex-direction: column;
@@ -222,10 +215,8 @@ include '../includes/header.php';
         </div>
     </div>
 
-    <!-- Toastify JS -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
-        // Hiển thị thông báo lỗi nếu có
         <?php if (isset($_SESSION['error'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['error']) ?>",
@@ -237,7 +228,6 @@ include '../includes/header.php';
             <?php unset($_SESSION['error']); ?>
         <?php endif; ?>
 
-        // Hiển thị thông báo thành công nếu có
         <?php if (isset($_SESSION['success'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['success']) ?>",

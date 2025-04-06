@@ -13,7 +13,6 @@ $user_id = $_SESSION['user_id'];
 $cart = $_SESSION['cart'][$user_id] ?? [];
 $total_price = 0;
 
-// Lấy thông tin sản phẩm từ cơ sở dữ liệu
 $cart_items = [];
 if (!empty($cart)) {
     $product_ids = array_keys($cart);
@@ -23,7 +22,6 @@ if (!empty($cart)) {
         $stmt->execute($product_ids);
         $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Kết hợp thông tin từ cơ sở dữ liệu với giỏ hàng
         foreach ($products as $product) {
             $cart_items[$product['id']] = [
                 'name' => $product['name'],
@@ -42,13 +40,9 @@ if (!empty($cart)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giỏ Hàng</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Toastify CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- CSS tùy chỉnh -->
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -181,7 +175,6 @@ if (!empty($cart)) {
             padding: 2rem;
         }
 
-        /* Responsive */
         @media (max-width: 767px) {
             .card-header {
                 flex-direction: column;
@@ -281,10 +274,8 @@ if (!empty($cart)) {
         </div>
     </div>
 
-    <!-- Toastify JS -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
-        // Hiển thị thông báo lỗi nếu có
         <?php if (isset($_SESSION['error'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['error']) ?>",
@@ -296,7 +287,6 @@ if (!empty($cart)) {
             <?php unset($_SESSION['error']); ?>
         <?php endif; ?>
 
-        // Hiển thị thông báo thành công nếu có
         <?php if (isset($_SESSION['success'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['success']) ?>",
@@ -308,7 +298,6 @@ if (!empty($cart)) {
             <?php unset($_SESSION['success']); ?>
         <?php endif; ?>
 
-        // Hiển thị thông báo thêm vào giỏ hàng
         <?php if (isset($_SESSION['cart_success'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['cart_success']) ?>",
@@ -333,17 +322,14 @@ if (!empty($cart)) {
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        // Cập nhật số lượng
                         const qtyElement = document.getElementById(`qty-${id}`);
                         qtyElement.textContent = data.new_quantity;
 
-                        // Nếu số lượng = 0, xóa hàng khỏi bảng
                         if (data.new_quantity === 0) {
                             const row = document.querySelector(`tr[data-id="${id}"]`);
                             row.remove();
                         }
 
-                        // Cập nhật tổng tiền của hàng
                         const row = document.querySelector(`tr[data-id="${id}"]`);
                         if (row) {
                             const priceText = row.querySelector('.price').textContent.replace(/[^0-9]/g, '');
@@ -352,7 +338,6 @@ if (!empty($cart)) {
                             row.querySelector('.subtotal').textContent = newSubtotal.toLocaleString('vi-VN') + ' VNĐ';
                         }
 
-                        // Cập nhật tổng tiền toàn bộ giỏ hàng
                         let totalPrice = 0;
                         document.querySelectorAll('tbody tr').forEach(row => {
                             const subtotalText = row.querySelector('.subtotal').textContent.replace(/[^0-9]/g, '');
@@ -360,7 +345,6 @@ if (!empty($cart)) {
                         });
                         document.getElementById('total-price').textContent = totalPrice.toLocaleString('vi-VN');
 
-                        // Nếu giỏ hàng trống, tải lại trang
                         if (document.querySelectorAll('tbody tr').length === 0) {
                             window.location.reload();
                         }

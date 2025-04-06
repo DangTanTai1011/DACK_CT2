@@ -2,13 +2,11 @@
 include '../config/db.php';
 session_start();
 
-// Kiểm tra đăng nhập & phân quyền admin
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
     header("Location: ../auth/login.php");
     exit;
 }
 
-// Truy vấn danh sách sản phẩm + tên danh mục
 $stmt = $pdo->query("SELECT products.*, categories.name AS category_name 
                      FROM products 
                      LEFT JOIN categories ON products.category_id = categories.id");
@@ -21,13 +19,9 @@ $products = $stmt->fetchAll();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý sản phẩm</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Toastify CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- CSS tùy chỉnh -->
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -141,7 +135,6 @@ $products = $stmt->fetchAll();
             background: #b02a37;
         }
 
-        /* Responsive */
         @media (max-width: 767px) {
             .table-responsive {
                 overflow-x: auto;
@@ -216,10 +209,8 @@ $products = $stmt->fetchAll();
         </div>
     </div>
 
-    <!-- Toastify JS -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
-        // Hiển thị thông báo lỗi nếu có
         <?php if (isset($_SESSION['error'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['error']) ?>",
@@ -231,7 +222,6 @@ $products = $stmt->fetchAll();
             <?php unset($_SESSION['error']); ?>
         <?php endif; ?>
 
-        // Hiển thị thông báo thành công nếu có
         <?php if (isset($_SESSION['success'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['success']) ?>",

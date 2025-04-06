@@ -1,12 +1,10 @@
 <?php
 session_start();
 require '../config/db.php';
-include '../includes/header.php'; // Khôi phục header.php
+include '../includes/header.php';
 
-// Kiểm tra nếu user chưa đăng nhập
 $user_id = $_SESSION['user_id'] ?? null;
 
-// Lấy thông tin sản phẩm
 $id = $_GET['id'] ?? null;
 if (!$id) {
     $_SESSION['error'] = 'Sản phẩm không tồn tại.';
@@ -26,24 +24,20 @@ if (!$product) {
     exit;
 }
 
-// Lấy đánh giá sản phẩm
 $reviewsStmt = $pdo->prepare("SELECT r.*, u.username FROM reviews r 
                               JOIN users u ON r.user_id = u.id 
                               WHERE r.product_id = ? ORDER BY r.created_at DESC");
 $reviewsStmt->execute([$id]);
 $reviews = $reviewsStmt->fetchAll();
 
-// Tính trung bình đánh giá
 $avgStmt = $pdo->prepare("SELECT ROUND(AVG(rating), 1) FROM reviews WHERE product_id = ?");
 $avgStmt->execute([$id]);
 $avg = $avgStmt->fetchColumn() ?? 0;
 
-// Xử lý gửi đánh giá mới
 if ($_SERVER["REQUEST_METHOD"] === "POST" && $user_id) {
     $rating = $_POST['rating'];
     $comment = $_POST['comment'];
 
-    // Thêm đánh giá mới
     $stmt = $pdo->prepare("INSERT INTO reviews (product_id, user_id, rating, comment, created_at) VALUES (?, ?, ?, ?, NOW())");
     if ($stmt->execute([$id, $user_id, $rating, $comment])) {
         $_SESSION['success'] = 'Đánh giá của bạn đã được gửi thành công!';
@@ -62,13 +56,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $user_id) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chi tiết sản phẩm - <?= htmlspecialchars($product['name']) ?></title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Toastify CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- CSS tùy chỉnh -->
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -240,7 +230,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $user_id) {
             padding: 2rem;
         }
 
-        /* Responsive */
         @media (max-width: 767px) {
             .card-header {
                 flex-direction: column;
@@ -277,12 +266,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $user_id) {
 </head>
 <body>
     <div class="container">
-        <!-- Card: Thông tin sản phẩm -->
         <div class="card">
             <div class="card-header">
                 <a href="../index.php" class="btn btn-back"><i class="fas fa-arrow-left"></i> Quay về</a>
                 <h2><i class="fas fa-box-open"></i> Chi tiết sản phẩm</h2>
-                <div></div> <!-- Placeholder để giữ layout -->
+                <div></div>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -306,7 +294,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $user_id) {
             </div>
         </div>
 
-        <!-- Card: Đánh giá người dùng -->
         <div class="card">
             <div class="card-header">
                 <h4><i class="fas fa-comments"></i> Đánh giá người dùng</h4>
@@ -328,7 +315,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $user_id) {
             </div>
         </div>
 
-        <!-- Card: Gửi đánh giá -->
         <?php if ($user_id): ?>
             <div class="card">
                 <div class="card-header">
@@ -361,7 +347,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $user_id) {
             </div>
         <?php endif; ?>
 
-        <!-- Card: Sản phẩm tương tự -->
         <div class="card">
             <div class="card-header">
                 <h4><i class="fas fa-sync-alt"></i> Sản phẩm tương tự</h4>
@@ -397,10 +382,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $user_id) {
         </div>
     </div>
 
-    <!-- Toastify JS -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
-        // Hiển thị thông báo lỗi nếu có
         <?php if (isset($_SESSION['error'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['error']) ?>",
@@ -412,7 +395,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $user_id) {
             <?php unset($_SESSION['error']); ?>
         <?php endif; ?>
 
-        // Hiển thị thông báo thành công nếu có
         <?php if (isset($_SESSION['success'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['success']) ?>",
@@ -425,6 +407,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $user_id) {
         <?php endif; ?>
     </script>
 
-<?php include '../includes/footer.php'; // Khôi phục footer.php ?>
+<?php include '../includes/footer.php'; ?>
 </body>
 </html>

@@ -2,7 +2,6 @@
 session_start();
 include '../config/db.php';
 
-// Kiểm tra xem người dùng đã đăng nhập chưa
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['message'] = "Bạn cần đăng nhập để xem hồ sơ cá nhân.";
     header("Location: ../Auth/login.php");
@@ -11,7 +10,6 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Lấy thông tin người dùng
 $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch();
@@ -22,7 +20,6 @@ if (!$user) {
     exit();
 }
 
-// Xử lý cập nhật thông tin
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
     $email = $_POST['email'] ?? '';
@@ -30,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($username && $email) {
         $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ? WHERE id = ?");
         $stmt->execute([$username, $email, $user_id]);
-        $_SESSION['username'] = $username; // Cập nhật session
+        $_SESSION['username'] = $username;
         $_SESSION['message'] = "Cập nhật thông tin thành công!";
         header("Location: profile.php");
         exit();
@@ -41,7 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Include header.php after all header() calls
 include '../includes/header.php';
 ?>
 

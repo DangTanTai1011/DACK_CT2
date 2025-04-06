@@ -2,7 +2,6 @@
 session_start();
 require '../config/db.php';
 
-// Kiểm tra quyền truy cập: chỉ admin được vào trang này
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     $_SESSION['error'] = 'Bạn không có quyền truy cập trang này.';
     header("Location: login.php");
@@ -16,13 +15,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trang quản trị</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Toastify CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- CSS tùy chỉnh -->
     <style>
         body {
             background: #f5f7fa;
@@ -142,11 +137,11 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
         }
 
         .row {
-            row-gap: 1.5rem; /* Khoảng cách giữa các hàng */
+            row-gap: 1.5rem;
         }
 
         .col-md-4 {
-            margin-bottom: 1.5rem; /* Khoảng cách giữa các box trong cùng một hàng */
+            margin-bottom: 1.5rem;
         }
 
         @media (max-width: 767px) {
@@ -167,7 +162,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
                 <p class="description-text">Đây là trang quản trị dành riêng cho quản trị viên.</p>
 
                 <div class="row">
-                    <!-- Quản lý sản phẩm -->
                     <div class="col-md-4">
                         <div class="box">
                             <div class="detail-box">
@@ -178,7 +172,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
                         </div>
                     </div>
 
-                    <!-- Quản lý danh mục -->
                     <div class="col-md-4">
                         <div class="box">
                             <div class="detail-box">
@@ -189,7 +182,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
                         </div>
                     </div>
 
-                    <!-- Quản lý đánh giá -->
                     <div class="col-md-4">
                         <div class="box">
                             <div class="detail-box">
@@ -200,7 +192,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
                         </div>
                     </div>
 
-                    <!-- Quản lý đơn hàng -->
                     <div class="col-md-4">
                         <div class="box">
                             <div class="detail-box">
@@ -211,7 +202,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
                         </div>
                     </div>
 
-                    <!-- Thống kê doanh thu -->
                     <div class="col-md-4">
                         <div class="box">
                             <div class="detail-box">
@@ -222,7 +212,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
                         </div>
                     </div>
 
-                    <!-- Quản lý tài khoản -->
                     <div class="col-md-4">
                         <div class="box">
                             <div class="detail-box">
@@ -233,7 +222,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
                         </div>
                     </div>
 
-                    <!-- Xem sản phẩm -->
                     <div class="col-md-4">
                         <div class="box">
                             <div class="detail-box">
@@ -252,10 +240,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
         </div>
     </div>
 
-    <!-- Toastify JS -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
-        // Hiển thị thông báo lỗi nếu có
+        
         <?php if (isset($_SESSION['error'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['error']) ?>",
@@ -267,7 +254,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
             <?php unset($_SESSION['error']); ?>
         <?php endif; ?>
 
-        // Hiển thị thông báo thành công nếu có
         <?php if (isset($_SESSION['success'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['success']) ?>",

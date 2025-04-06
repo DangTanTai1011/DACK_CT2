@@ -2,7 +2,6 @@
 session_start();
 include '../config/db.php';
 
-// Kiểm tra xem người dùng đã đăng nhập chưa
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['message'] = "Bạn cần đăng nhập để xem chi tiết đơn hàng.";
     header("Location: ../auth/login.php");
@@ -12,7 +11,6 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 $order_id = $_GET['order_id'] ?? '';
 
-// Lấy thông tin đơn hàng
 $stmt = $pdo->prepare("SELECT o.*, u.username 
                        FROM orders o 
                        LEFT JOIN users u ON o.user_id = u.id 
@@ -26,7 +24,6 @@ if (!$order) {
     exit();
 }
 
-// Lấy chi tiết đơn hàng
 $stmt = $pdo->prepare("SELECT od.*, p.name AS product_name 
                        FROM order_details od 
                        JOIN products p ON od.product_id = p.id 
@@ -34,7 +31,6 @@ $stmt = $pdo->prepare("SELECT od.*, p.name AS product_name
 $stmt->execute([$order_id]);
 $order_details = $stmt->fetchAll();
 
-// Lấy lịch sử mua hàng của khách hàng
 $user_id = $order['user_id'];
 $stmt = $pdo->prepare("SELECT o.*, u.username 
                        FROM orders o 
@@ -51,13 +47,9 @@ $order_history = $stmt->fetchAll();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chi tiết đơn hàng #<?php echo $order['id']; ?></title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Toastify CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- CSS tùy chỉnh -->
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -173,7 +165,6 @@ $order_history = $stmt->fetchAll();
             padding: 2rem;
         }
 
-        /* Responsive */
         @media (max-width: 767px) {
             .table-responsive {
                 overflow-x: auto;
@@ -206,12 +197,11 @@ $order_history = $stmt->fetchAll();
 </head>
 <body>
     <div class="container">
-        <!-- Card: Chi tiết đơn hàng -->
         <div class="card">
             <div class="card-header">
                 <a href="../index.php" class="btn btn-back"><i class="fas fa-arrow-left"></i> Quay về</a>
                 <h2><i class="fas fa-shopping-cart"></i> Chi tiết đơn hàng #<?php echo $order['id']; ?></h2>
-                <div></div> <!-- Placeholder để giữ layout -->
+                <div></div>
             </div>
             <div class="card-body">
                 <div class="order-info">
@@ -231,7 +221,6 @@ $order_history = $stmt->fetchAll();
             </div>
         </div>
 
-        <!-- Card: Danh sách sản phẩm -->
         <div class="card">
             <div class="card-header">
                 <h4><i class="fas fa-box-open"></i> Danh sách sản phẩm</h4>
@@ -268,7 +257,6 @@ $order_history = $stmt->fetchAll();
             </div>
         </div>
 
-        <!-- Card: Lịch sử mua hàng -->
         <div class="card">
             <div class="card-header">
                 <h4><i class="fas fa-history"></i> Lịch sử mua hàng của khách hàng</h4>
@@ -316,10 +304,8 @@ $order_history = $stmt->fetchAll();
         </div>
     </div>
 
-    <!-- Toastify JS -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
-        // Hiển thị thông báo lỗi nếu có
         <?php if (isset($_SESSION['error'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['error']) ?>",
@@ -331,7 +317,6 @@ $order_history = $stmt->fetchAll();
             <?php unset($_SESSION['error']); ?>
         <?php endif; ?>
 
-        // Hiển thị thông báo thành công nếu có
         <?php if (isset($_SESSION['success'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['success']) ?>",

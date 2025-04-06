@@ -2,19 +2,16 @@
 session_start();
 require '../config/db.php';
 
-// Kiểm tra quyền truy cập: chỉ admin được vào trang này
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     $_SESSION['error'] = 'Bạn không có quyền truy cập trang này.';
     header("Location: ../index.php");
     exit();
 }
 
-// Xử lý phân quyền
 if (isset($_GET['action']) && $_GET['action'] === 'change_role' && isset($_GET['id'])) {
     $user_id = $_GET['id'];
-    $new_role = $_GET['role'] === 'admin' ? 'user' : 'admin'; // Chuyển đổi giữa admin và user
+    $new_role = $_GET['role'] === 'admin' ? 'user' : 'admin';
 
-    // Không cho phép thay đổi vai trò của chính admin đang đăng nhập
     if ($user_id == $_SESSION['user_id']) {
         $_SESSION['error'] = 'Bạn không thể thay đổi vai trò của chính mình.';
     } else {
@@ -29,11 +26,9 @@ if (isset($_GET['action']) && $_GET['action'] === 'change_role' && isset($_GET['
     exit();
 }
 
-// Xử lý xóa tài khoản
 if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])) {
     $user_id = $_GET['id'];
 
-    // Không cho phép xóa chính tài khoản admin đang đăng nhập
     if ($user_id == $_SESSION['user_id']) {
         $_SESSION['error'] = 'Bạn không thể xóa tài khoản của chính mình.';
     } else {
@@ -48,7 +43,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])
     exit();
 }
 
-// Lấy danh sách người dùng
 $stmt = $pdo->query("SELECT * FROM users ORDER BY created_at DESC");
 $users = $stmt->fetchAll();
 ?>
@@ -59,13 +53,9 @@ $users = $stmt->fetchAll();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý tài khoản</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Toastify CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- CSS tùy chỉnh -->
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -166,7 +156,6 @@ $users = $stmt->fetchAll();
             padding: 2rem;
         }
 
-        /* Responsive */
         @media (max-width: 767px) {
             .table-responsive {
                 overflow-x: auto;
@@ -199,7 +188,7 @@ $users = $stmt->fetchAll();
             <div class="card-header">
                 <a href="../auth/admin_dashboard.php" class="btn btn-back"><i class="fas fa-arrow-left"></i> Quay về</a>
                 <h2><i class="fas fa-users"></i> Quản lý tài khoản</h2>
-                <div></div> <!-- Placeholder để giữ layout -->
+                <div></div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -249,10 +238,8 @@ $users = $stmt->fetchAll();
         </div>
     </div>
 
-    <!-- Toastify JS -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
-        // Hiển thị thông báo lỗi nếu có
         <?php if (isset($_SESSION['error'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['error']) ?>",
@@ -264,7 +251,6 @@ $users = $stmt->fetchAll();
             <?php unset($_SESSION['error']); ?>
         <?php endif; ?>
 
-        // Hiển thị thông báo thành công nếu có
         <?php if (isset($_SESSION['success'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['success']) ?>",

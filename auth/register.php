@@ -2,13 +2,11 @@
 session_start();
 require '../config/db.php';
 
-// Xử lý đăng ký
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = trim($_POST['username'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    // Kiểm tra đầu vào
     if (empty($username) || empty($email) || empty($password)) {
         $_SESSION['error'] = 'Vui lòng nhập đầy đủ thông tin.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -16,7 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } elseif (strlen($password) < 6) {
         $_SESSION['error'] = 'Mật khẩu phải có ít nhất 6 ký tự.';
     } else {
-        // Kiểm tra xem username hoặc email đã tồn tại chưa
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE username = ? OR email = ?");
         $stmt->execute([$username, $email]);
         $count = $stmt->fetchColumn();
@@ -24,9 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($count > 0) {
             $_SESSION['error'] = 'Tên đăng nhập hoặc email đã tồn tại.';
         } else {
-            // Mã hóa mật khẩu và thêm người dùng mới với vai trò mặc định là 'user'
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-            $role = 'user'; // Vai trò mặc định
+            $role = 'user';
             $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role, created_at) VALUES (?, ?, ?, ?, NOW())");
             if ($stmt->execute([$username, $email, $passwordHash, $role])) {
                 $_SESSION['success'] = 'Đăng ký thành công! Vui lòng đăng nhập.';
@@ -46,13 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng ký</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Toastify CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <!-- Font Awesome để thêm biểu tượng -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- CSS tùy chỉnh -->
     <style>
         body {
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -184,10 +176,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </form>
     </div>
 
-    <!-- Toastify JS -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
-        // Hiển thị thông báo lỗi nếu có
         <?php if (isset($_SESSION['error'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['error']) ?>",
@@ -199,7 +189,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <?php unset($_SESSION['error']); ?>
         <?php endif; ?>
 
-        // Hiển thị thông báo thành công nếu có
         <?php if (isset($_SESSION['success'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['success']) ?>",

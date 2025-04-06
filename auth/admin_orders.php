@@ -2,14 +2,12 @@
 session_start();
 include '../config/db.php';
 
-// Kiểm tra xem admin đã đăng nhập chưa
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
     $_SESSION['message'] = "Bạn cần đăng nhập với tài khoản admin để truy cập trang này.";
     header("Location: ../auth/login.php");
     exit();
 }
 
-// Xử lý xác nhận hoặc hủy đơn hàng
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $order_id = $_POST['order_id'] ?? '';
     $action = $_POST['action'] ?? '';
@@ -26,7 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
 }
 
-// Lấy danh sách đơn hàng
 $stmt = $pdo->query("SELECT o.*, u.username 
                      FROM orders o 
                      LEFT JOIN users u ON o.user_id = u.id 
@@ -40,13 +37,9 @@ $orders = $stmt->fetchAll();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý đơn hàng</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Toastify CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- CSS tùy chỉnh -->
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -156,7 +149,6 @@ $orders = $stmt->fetchAll();
             padding: 2rem;
         }
 
-        /* Responsive */
         @media (max-width: 767px) {
             .table-responsive {
                 overflow-x: auto;
@@ -189,7 +181,7 @@ $orders = $stmt->fetchAll();
             <div class="card-header">
                 <a href="../auth/admin_dashboard.php" class="btn btn-back"><i class="fas fa-arrow-left"></i> Quay về</a>
                 <h2><i class="fas fa-shopping-cart"></i> Quản lý đơn hàng</h2>
-                <div></div> <!-- Placeholder để giữ layout -->
+                <div></div>
             </div>
             <div class="card-body">
                 <?php if (empty($orders)): ?>
@@ -252,10 +244,8 @@ $orders = $stmt->fetchAll();
         </div>
     </div>
 
-    <!-- Toastify JS -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
-        // Hiển thị thông báo lỗi nếu có
         <?php if (isset($_SESSION['error'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['error']) ?>",
@@ -267,7 +257,6 @@ $orders = $stmt->fetchAll();
             <?php unset($_SESSION['error']); ?>
         <?php endif; ?>
 
-        // Hiển thị thông báo thành công nếu có
         <?php if (isset($_SESSION['success'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['success']) ?>",

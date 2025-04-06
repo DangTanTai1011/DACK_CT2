@@ -1,6 +1,5 @@
 
 
-  <!-- info section -->
   <section class="info_section long_section">
 
     <div class="container">
@@ -99,10 +98,7 @@
       </div>
     </div>
   </section>
-  <!-- end info_section -->
   
-  
-  <!-- footer section -->
   <footer class="footer_section">
     <div class="container">
       <p>
@@ -111,4 +107,3 @@
       </p>
     </div>
   </footer>
-  <!-- footer section -->

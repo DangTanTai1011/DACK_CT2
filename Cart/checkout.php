@@ -12,14 +12,12 @@ $user_id = $_SESSION['user_id'];
 $cart = $_SESSION['cart'][$user_id] ?? [];
 $total_price = 0;
 
-// If the cart is empty, show a message
 if (empty($cart)) {
     $_SESSION['error'] = "Giỏ hàng của bạn trống. Hãy thêm sản phẩm vào giỏ hàng.";
     header("Location: ../Cart/cart.php");
     exit();
 }
 
-// Lấy thông tin sản phẩm từ cơ sở dữ liệu
 $cart_items = [];
 if (!empty($cart)) {
     $product_ids = array_keys($cart);
@@ -29,7 +27,6 @@ if (!empty($cart)) {
         $stmt->execute($product_ids);
         $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Kết hợp thông tin từ cơ sở dữ liệu với giỏ hàng
         foreach ($products as $product) {
             $cart_items[$product['id']] = [
                 'name' => $product['name'],
@@ -42,35 +39,29 @@ if (!empty($cart)) {
     }
 }
 
-// Xử lý form thanh toán
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $customer_name = $_POST['customer_name'] ?? '';
     $phone = $_POST['phone'] ?? '';
     $address = $_POST['address'] ?? '';
     $note = $_POST['note'] ?? '';
 
-    // Validate input
     if (empty($customer_name) || empty($phone) || empty($address)) {
         $_SESSION['error'] = "Vui lòng điền đầy đủ thông tin thanh toán!";
         header("Location: checkout.php");
         exit();
     }
 
-    // Create order in orders table
     $stmt = $pdo->prepare("INSERT INTO orders (user_id, total, status, customer_name, phone, address, note) VALUES (?, ?, 'pending', ?, ?, ?, ?)");
     $stmt->execute([$user_id, $total_price, $customer_name, $phone, $address, $note]);
-    $order_id = $pdo->lastInsertId(); // Get the last inserted order ID
+    $order_id = $pdo->lastInsertId();
 
-    // Save order details for each item in the cart
     foreach ($cart as $id => $item) {
         $stmt = $pdo->prepare("INSERT INTO order_details (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)");
         $stmt->execute([$order_id, $id, $item['quantity'], $item['price']]);
     }
 
-    // Clear the cart after successful order
     unset($_SESSION['cart']);
 
-    // Redirect to checkout success page
     $_SESSION['success'] = "Đặt hàng thành công!";
     header("Location: checkout_success.php");
     exit();
@@ -85,13 +76,9 @@ include '../includes/header.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thanh Toán</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Toastify CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- CSS tùy chỉnh -->
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -207,7 +194,6 @@ include '../includes/header.php';
             background: #ff6f61;
         }
 
-        /* Responsive */
         @media (max-width: 767px) {
             .card-header {
                 flex-direction: column;
@@ -244,10 +230,9 @@ include '../includes/header.php';
             <div class="card-header">
                 <a href="../Cart/cart.php" class="btn btn-back"><i class="fas fa-arrow-left"></i> Quay về giỏ hàng</a>
                 <h2><i class="fas fa-credit-card"></i> Thông Tin Thanh Toán</h2>
-                <div></div> <!-- Placeholder để giữ layout -->
+                <div></div>
             </div>
             <div class="card-body">
-                <!-- Hiển thị chi tiết giỏ hàng -->
                 <h4 class="mb-3">Chi tiết đơn hàng</h4>
                 <table class="table table-bordered">
                     <thead>
@@ -279,7 +264,6 @@ include '../includes/header.php';
                     Tổng tiền: <?php echo number_format($total_price, 0, ',', '.'); ?> VNĐ
                 </div>
 
-                <!-- Form thanh toán -->
                 <h4 class="mb-3">Thông tin giao hàng</h4>
                 <form method="POST" class="row g-3">
                     <div class="col-md-6">
@@ -306,10 +290,8 @@ include '../includes/header.php';
         </div>
     </div>
 
-    <!-- Toastify JS -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
-        // Hiển thị thông báo lỗi nếu có
         <?php if (isset($_SESSION['error'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['error']) ?>",
@@ -321,7 +303,6 @@ include '../includes/header.php';
             <?php unset($_SESSION['error']); ?>
         <?php endif; ?>
 
-        // Hiển thị thông báo thành công nếu có
         <?php if (isset($_SESSION['success'])): ?>
             Toastify({
                 text: "<?= htmlspecialchars($_SESSION['success']) ?>",

@@ -1,8 +1,8 @@
 <?php
 $host = 'localhost';
-$db = 'Nhom8_DACK'; // Đã đổi tên
+$db = 'Nhom8_DACK';
 $user = 'root';
-$pass = ''; // Mặc định XAMPP
+$pass = '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
