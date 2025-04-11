@@ -7,19 +7,19 @@
         <a href="">
           <i class="fa fa-phone" aria-hidden="true"></i>
           <span>
-            Call : +01 123455678990
+            ĐIỆN THOẠI : +84 0367966452
           </span>
         </a>
         <a href="">
           <i class="fa fa-envelope" aria-hidden="true"></i>
           <span>
-            Email : demo@gmail.com
+            Email : nhom8@gmail.com
           </span>
         </a>
         <a href="">
           <i class="fa fa-map-marker" aria-hidden="true"></i>
           <span>
-            Location
+            VỊ TRÍ
           </span>
         </a>
       </div>
@@ -29,40 +29,38 @@
           <div class="col-sm-6 col-md-4 col-lg-3">
             <div class="info_links">
               <h4>
-                QUICK LINKS
+                ĐƯỜNG DẪN NHANH
               </h4>
               <div class="info_links_menu">
-                <a class="" href="index.html">Home <span class="sr-only">(current)</span></a>
-                <a class="" href="about.html"> About</a>
-                <a class="" href="furniture.html">Furniture</a>
-                <a class="" href="blog.html">Blog</a>
-                <a class="" href="contact.html">Contact Us</a>
+                <a class="" href="index.php">Trang Chủ <span class="sr-only">(current)</span></a>
+                <a class="" href="order_history.php">Lịch Sử</a>
+                <a class="" href="profile.php">Hồ Sơ</a>
               </div>
             </div>
           </div>
           <div class="col-sm-6 col-md-4 col-lg-3 mx-auto">
             <div class="info_post">
               <h5>
-                INSTAGRAM FEEDS
+                BẢN TIN INSTAGRAM
               </h5>
               <div class="post_box">
                 <div class="img-box">
-                  <img src="/Nhom8_DACK/public/images/f1.png" alt="">
+                  <img src="/Nhom8_DACK/image/Asus1.jpg" alt="">
                 </div>
                 <div class="img-box">
-                  <img src="/Nhom8_DACK/public/images/f2.png" alt="">
+                  <img src="/Nhom8_DACK/image/Asus2.jpeg" alt="">
                 </div>
                 <div class="img-box">
-                  <img src="/Nhom8_DACK/public/images/f3.png" alt="">
+                  <img src="/Nhom8_DACK/image/Asus3.png" alt="">
                 </div>
                 <div class="img-box">
-                  <img src="/Nhom8_DACK/public/images/f4.png" alt="">
+                  <img src="/Nhom8_DACK/image/lenovo1.jpg" alt="">
                 </div>
                 <div class="img-box">
-                  <img src="/Nhom8_DACK/public/images/f5.png" alt="">
+                  <img src="/Nhom8_DACK/image/lenovo2.jpg" alt="">
                 </div>
                 <div class="img-box">
-                  <img src="/Nhom8_DACK/public/images/f6.png" alt="">
+                  <img src="/Nhom8_DACK/image/lenovo3.jpg" alt="">
                 </div>
               </div>
             </div>
@@ -70,12 +68,12 @@
           <div class="col-md-4">
             <div class="info_form">
               <h4>
-                SIGN UP TO OUR NEWSLETTER
+                ĐĂNG KÝ NHẬN BẢN TIN CỦA CHÚNG TÔI
               </h4>
               <form action="">
                 <input type="text" placeholder="Enter Your Email" />
                 <button type="submit">
-                  Subscribe
+                  ĐĂNG KÝ
                 </button>
               </form>
               <div class="social_box">

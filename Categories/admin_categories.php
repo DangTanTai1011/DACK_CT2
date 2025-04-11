@@ -7,6 +7,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
     exit;
 }
 
+// Thêm danh mục
 if (isset($_POST['add'])) {
     $name = $_POST['name'];
     $stmt = $pdo->prepare("INSERT INTO categories (name) VALUES (?)");
@@ -16,6 +17,30 @@ if (isset($_POST['add'])) {
     exit;
 }
 
+// Cập nhật danh mục
+if (isset($_POST['update'])) {
+    $id = $_POST['id'];
+    $name = $_POST['name'];
+    $stmt = $pdo->prepare("UPDATE categories SET name = ? WHERE id = ?");
+    if ($stmt->execute([$name, $id])) {
+        $_SESSION['success'] = 'Cập nhật danh mục thành công!';
+    } else {
+        $_SESSION['error'] = 'Cập nhật danh mục thất bại.';
+    }
+    header("Location: admin_categories.php");
+    exit;
+}
+
+// Lấy thông tin danh mục cần sửa
+$editCategory = null;
+if (isset($_GET['edit'])) {
+    $id = $_GET['edit'];
+    $stmt = $pdo->prepare("SELECT * FROM categories WHERE id = ?");
+    $stmt->execute([$id]);
+    $editCategory = $stmt->fetch();
+}
+
+// Xóa danh mục
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
     $stmt = $pdo->prepare("DELETE FROM categories WHERE id = ?");
@@ -106,6 +131,7 @@ $categories = $pdo->query("SELECT * FROM categories")->fetchAll();
             display: flex;
             align-items: center;
             gap: 1rem;
+            flex-wrap: wrap;
         }
 
         .form-add input {
@@ -135,10 +161,6 @@ $categories = $pdo->query("SELECT * FROM categories")->fetchAll();
             background: #ff6f61;
         }
 
-        .table {
-            margin-bottom: 0;
-        }
-
         .table th, .table td {
             vertical-align: middle;
             text-align: center;
@@ -158,7 +180,15 @@ $categories = $pdo->query("SELECT * FROM categories")->fetchAll();
             background: #b02a37;
         }
 
-        /* Responsive */
+        .btn-warning {
+            background: #ffc107;
+            border: none;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
         @media (max-width: 767px) {
             .table-responsive {
                 overflow-x: auto;
@@ -195,16 +225,20 @@ $categories = $pdo->query("SELECT * FROM categories")->fetchAll();
             <div class="card-header">
                 <a href="../auth/admin_dashboard.php" class="btn btn-back"><i class="fas fa-arrow-left"></i> Quay về</a>
                 <h2><i class="fas fa-folder-open"></i> Quản lý danh mục</h2>
-                <div></div> <!-- Placeholder để giữ layout -->
+                <div></div>
             </div>
             <div class="card-body">
-                <!-- Form thêm danh mục -->
                 <form method="POST" class="form-add">
-                    <input type="text" name="name" placeholder="Nhập tên danh mục" required>
-                    <button type="submit" name="add" class="btn btn-add"><i class="fas fa-plus"></i> Thêm</button>
+                    <input type="text" name="name" placeholder="Nhập tên danh mục" value="<?= $editCategory ? htmlspecialchars($editCategory['name']) : '' ?>" required>
+                    <?php if ($editCategory): ?>
+                        <input type="hidden" name="id" value="<?= $editCategory['id'] ?>">
+                        <button type="submit" name="update" class="btn btn-add"><i class="fas fa-save"></i> Cập nhật</button>
+                        <a href="admin_categories.php" class="btn btn-secondary">Hủy</a>
+                    <?php else: ?>
+                        <button type="submit" name="add" class="btn btn-add"><i class="fas fa-plus"></i> Thêm</button>
+                    <?php endif; ?>
                 </form>
 
-                <!-- Bảng danh sách danh mục -->
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover">
                         <thead>
@@ -221,6 +255,9 @@ $categories = $pdo->query("SELECT * FROM categories")->fetchAll();
                                         <td><?= htmlspecialchars($cat['id']) ?></td>
                                         <td><?= htmlspecialchars($cat['name']) ?></td>
                                         <td>
+                                            <a href="?edit=<?= $cat['id'] ?>" class="btn btn-warning btn-action text-white">
+                                                <i class="fas fa-edit"></i> Sửa
+                                            </a>
                                             <a href="?delete=<?= $cat['id'] ?>" class="btn btn-delete btn-action text-white" onclick="return confirm('Bạn có chắc muốn xóa danh mục này?')">
                                                 <i class="fas fa-trash"></i> Xóa
                                             </a>

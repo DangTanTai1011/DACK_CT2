@@ -175,6 +175,23 @@ if (!empty($cart)) {
             padding: 2rem;
         }
 
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quantity-control button {
+            min-width: 32px;
+            height: 32px;
+            padding: 0;
+        }
+
+        .quantity-control span {
+            min-width: 24px;
+            text-align: center;
+        }
+
         @media (max-width: 767px) {
             .card-header {
                 flex-direction: column;
@@ -250,9 +267,11 @@ if (!empty($cart)) {
                                     <td><?php echo htmlspecialchars($item['name']); ?></td>
                                     <td class="price"><?php echo number_format($item['price'], 0, ',', '.'); ?> VNĐ</td>
                                     <td>
-                                        <button class="btn btn-decrease update-qty" data-id="<?php echo $id; ?>" data-action="decrease"><i class="fas fa-minus"></i></button>
-                                        <span id="qty-<?php echo $id; ?>"><?php echo $item['quantity']; ?></span>
-                                        <button class="btn btn-increase update-qty" data-id="<?php echo $id; ?>" data-action="increase"><i class="fas fa-plus"></i></button>
+                                        <div class="quantity-control d-inline-flex align-items-center justify-content-center">
+                                            <button class="btn btn-decrease update-qty me-2" data-id="<?php echo $id; ?>" data-action="decrease"><i class="fas fa-minus"></i></button>
+                                            <span id="qty-<?php echo $id; ?>" class="fw-bold"><?php echo $item['quantity']; ?></span>
+                                            <button class="btn btn-increase update-qty ms-2" data-id="<?php echo $id; ?>" data-action="increase"><i class="fas fa-plus"></i></button>
+                                        </div>
                                     </td>
                                     <td class="subtotal"><?php echo number_format($subtotal, 0, ',', '.'); ?> VNĐ</td>
                                     <td>

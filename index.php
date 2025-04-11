@@ -182,6 +182,10 @@ unset($_SESSION['message']);
             color: #333;
             font-weight: 600;
             margin-bottom: 0.5rem;
+            white-space: nowrap;         
+            overflow: hidden;           
+            text-overflow: ellipsis;     
+            max-width: 100%;              
         }
 
         .product-card p {
@@ -270,10 +274,12 @@ unset($_SESSION['message']);
                     <div class="col-md-2">
                         <select name="price_range" class="form-control">
                             <option value="">Chọn khoảng giá</option>
-                            <option value="0-500000" <?= $min_price == '0' && $max_price == '500000' ? 'selected' : '' ?>>0 - 500.000 VNĐ</option>
-                            <option value="500000-1000000" <?= $min_price == '500000' && $max_price == '1000000' ? 'selected' : '' ?>>500.000 - 1.000.000 VNĐ</option>
-                            <option value="1000000-1500000" <?= $min_price == '1000000' && $max_price == '1500000' ? 'selected' : '' ?>>1.000.000 - 1.500.000 VNĐ</option>
-                            <option value="1500000-2000000" <?= $min_price == '1500000' && $max_price == '2000000' ? 'selected' : '' ?>>1.500.000 - 2.000.000 VNĐ</option>
+                            <option value="0-5000000" <?= $min_price == '0' && $max_price == '5000000' ? 'selected' : '' ?>>0 - 5.000.000 VNĐ</option>
+                            <option value="5000000-10000000" <?= $min_price == '5000000' && $max_price == '10000000' ? 'selected' : '' ?>>5.000.000 - 10.000.000 VNĐ</option>
+                            <option value="10000000-15000000" <?= $min_price == '10000000' && $max_price == '15000000' ? 'selected' : '' ?>>10.000.000 - 15.000.000 VNĐ</option>
+                            <option value="15000000-20000000" <?= $min_price == '15000000' && $max_price == '20000000' ? 'selected' : '' ?>>15.000.000 - 20.000.000 VNĐ</option>
+                            <option value="20000000-25000000" <?= $min_price == '20000000' && $max_price == '25000000' ? 'selected' : '' ?>>20.000.000 - 25.000.000 VNĐ</option>
+                            <option value="25000000-30000000" <?= $min_price == '25000000' && $max_price == '30000000' ? 'selected' : '' ?>>25.000.000 - 30.000.000 VNĐ</option>
                         </select>
                     </div>
                     <div class="col-md-4">
@@ -293,7 +299,7 @@ unset($_SESSION['message']);
                                 <div class="product-card">
                                     <img src="./image/<?= htmlspecialchars($p['image_url']) ?>" alt="<?= htmlspecialchars($p['name']) ?>">
                                     <div class="card-body">
-                                        <h5><?= htmlspecialchars($p['name']) ?></h5>
+                                        <h5 title="<?= htmlspecialchars($p['name']) ?>"><?= htmlspecialchars($p['name']) ?></h5>
                                         <p><strong>Danh mục:</strong> <?= htmlspecialchars($p['category_name']) ?></p>
                                         <p class="price">₫ <?= number_format($p['price'], 0, ',', '.') ?> VNĐ</p>
                                         <p><strong>Đánh giá:</strong> <?= number_format($p['avg_rating'], 1) ?> / 5</p>

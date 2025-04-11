@@ -6,7 +6,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'] ?? '';
     $passwordInput = $_POST['password'] ?? '';
 
-    // Kiểm tra đầu vào
     if (empty($username) || empty($passwordInput)) {
         $_SESSION['error'] = 'Vui lòng nhập đầy đủ thông tin.';
     } else {
@@ -19,7 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['username'] = $user['username'];
             $_SESSION['role'] = $user['role'];
 
-            // Điều hướng theo quyền
             if ($user['role'] === 'admin') {
                 header("Location: admin_dashboard.php");
             } else {
